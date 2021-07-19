@@ -19,7 +19,7 @@ public class EventDAOTest extends RedisTest {
   @Test
   public void shouldDoFacetedSearch() {
     Iterable<Event> events = getEvents();
-    events.forEach(eventDAO::upsert);
+    events.forEach(eventDAO::index);
 
     Set<Event> searchResult = eventDAO.search(Set.of(new Facet("disabled_access", true)));
     logger.debug("disabled_access=true:");

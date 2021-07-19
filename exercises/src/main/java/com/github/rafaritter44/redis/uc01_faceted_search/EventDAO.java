@@ -20,7 +20,7 @@ public class EventDAO {
     this.gson = gson;
   }
 
-  public void upsert(Event event) {
+  public void index(Event event) {
     String eventKey = getEventKey(event);
     String eventJson = gson.toJson(event);
     jedis.set(eventKey, eventJson);

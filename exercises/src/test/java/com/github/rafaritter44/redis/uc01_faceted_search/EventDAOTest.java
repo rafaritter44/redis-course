@@ -3,6 +3,7 @@ package com.github.rafaritter44.redis.uc01_faceted_search;
 import com.github.rafaritter44.redis.RedisTest;
 import com.google.gson.Gson;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,19 +22,44 @@ public class EventDAOTest extends RedisTest {
     Iterable<Event> events = getEvents();
     events.forEach(eventDAO::index);
 
-    Set<Event> searchResult = eventDAO.search(Set.of(new Facet("disabled_access", true)));
+    Set<Event> searchResult = eventDAO.search(List.of(new Facet("disabled_access", true)));
     logger.debug("disabled_access=true:");
     logCollection(searchResult);
 
     searchResult =
         eventDAO.search(
-            Set.of(new Facet("disabled_access", true), new Facet("medal_event", false)));
+            List.of(new Facet("disabled_access", true), new Facet("medal_event", false)));
     logger.debug("disabled_access=true, medal_event=false:");
     logCollection(searchResult);
 
     searchResult =
         eventDAO.search(
-            Set.of(
+            List.of(
+                new Facet("disabled_access", false),
+                new Facet("medal_event", false),
+                new Facet("venue", "Nippon Budokan")));
+    logger.debug("disabled_access=false, medal_event=false, venue=Nippon Budokan:");
+    logCollection(searchResult);
+  }
+
+  @Test
+  public void shouldDoHashedFacetedSearch() {
+    Iterable<Event> events = getEvents();
+    events.forEach(eventDAO::indexHashing);
+
+    Set<Event> searchResult = eventDAO.searchHashed(List.of(new Facet("disabled_access", true)));
+    logger.debug("disabled_access=true:");
+    logCollection(searchResult);
+
+    searchResult =
+        eventDAO.searchHashed(
+            List.of(new Facet("disabled_access", true), new Facet("medal_event", false)));
+    logger.debug("disabled_access=true, medal_event=false:");
+    logCollection(searchResult);
+
+    searchResult =
+        eventDAO.searchHashed(
+            List.of(
                 new Facet("disabled_access", false),
                 new Facet("medal_event", false),
                 new Facet("venue", "Nippon Budokan")));
@@ -46,7 +72,7 @@ public class EventDAOTest extends RedisTest {
   }
 
   private Iterable<Event> getEvents() {
-    return Set.of(
+    return List.of(
         Event.builder()
             .sku("123-ABC-723")
             .name("Men's 100m Final")

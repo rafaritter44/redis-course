@@ -85,12 +85,12 @@ public class EventDAO {
   }
 
   private String getFacetKey(Facet facet) {
-    return KeyNameHelper.getKey("fs", facet.getAttribute(), facet.getValue().toString());
+    return KeyNameHelper.getKey("uc01", "fs", facet.getAttribute(), facet.getValue().toString());
   }
 
   private String getHashedFacetKey(Iterable<Facet> facets) {
     String hashedFacets = hash(facets);
-    return KeyNameHelper.getKey("hfs", hashedFacets);
+    return KeyNameHelper.getKey("uc01", "hfs", hashedFacets);
   }
 
   private String hash(Object object) {
@@ -98,6 +98,6 @@ public class EventDAO {
   }
 
   private String getEventKey(Event event) {
-    return KeyNameHelper.getKey("event", event.getSku());
+    return KeyNameHelper.getKey("uc01", "event", event.getSku());
   }
 }

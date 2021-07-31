@@ -1,5 +1,6 @@
-package com.github.rafaritter44.redis.uc01_faceted_search;
+package com.github.rafaritter44.redis.uc02_inventory_control;
 
+import java.math.BigDecimal;
 import lombok.Builder;
 import lombok.Value;
 
@@ -12,4 +13,7 @@ public class Event {
   boolean medalEvent;
   String venue;
   String category;
+  int capacity;
+  int available;
+  BigDecimal price;
 }

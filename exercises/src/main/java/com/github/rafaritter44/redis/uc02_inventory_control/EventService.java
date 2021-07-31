@@ -45,6 +45,7 @@ public class EventService {
     jedis.watch(eventKey);
     int available = Integer.valueOf(jedis.hget(eventKey, "available"));
     if (quantity > available) {
+      jedis.unwatch();
       return false;
     }
     BigDecimal price = new BigDecimal(jedis.hget(eventKey, "price"));

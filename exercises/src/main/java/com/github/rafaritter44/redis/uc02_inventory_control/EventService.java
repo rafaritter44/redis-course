@@ -17,30 +17,30 @@ import java.util.UUID;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
 
-public class EventService {
+class EventService {
 
   private final Jedis jedis;
   private final Gson gson;
 
-  public EventService(Jedis jedis, Gson gson) {
+  EventService(Jedis jedis, Gson gson) {
     this.jedis = jedis;
     this.gson = gson;
   }
 
-  public void set(Event event) {
+  void set(Event event) {
     String eventKey = getEventKey(event);
     Map<String, String> eventHash = toMap(event);
     jedis.hmset(eventKey, eventHash);
   }
 
-  public Event get(String eventSku) {
+  Event get(String eventSku) {
     String eventKey = getEventKey(eventSku);
     Map<String, String> eventHash = jedis.hgetAll(eventKey);
     Event event = fromMap(eventHash, Event.class);
     return event;
   }
 
-  public boolean purchase(String customer, String eventSku, int quantity) {
+  boolean purchase(String customer, String eventSku, int quantity) {
     String eventKey = getEventKey(eventSku);
     jedis.watch(eventKey);
     int available = Integer.valueOf(jedis.hget(eventKey, "available"));

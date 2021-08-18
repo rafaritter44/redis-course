@@ -8,7 +8,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class Purchase {
+class Purchase {
   UUID orderId;
   String customer;
   int quantity;

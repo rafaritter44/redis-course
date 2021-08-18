@@ -12,17 +12,17 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import redis.clients.jedis.Jedis;
 
-public class EventDAO {
+class EventDAO {
 
   private final Jedis jedis;
   private final Gson gson;
 
-  public EventDAO(Jedis jedis, Gson gson) {
+  EventDAO(Jedis jedis, Gson gson) {
     this.jedis = jedis;
     this.gson = gson;
   }
 
-  public void index(Event event) {
+  void index(Event event) {
     String eventKey = getEventKey(event);
     String eventJson = gson.toJson(event);
     jedis.set(eventKey, eventJson);
@@ -35,7 +35,7 @@ public class EventDAO {
         });
   }
 
-  public Set<Event> search(Iterable<Facet> facets) {
+  Set<Event> search(Iterable<Facet> facets) {
     String[] facetKeys =
         StreamSupport.stream(facets.spliterator(), false)
             .map(this::getFacetKey)
@@ -45,7 +45,7 @@ public class EventDAO {
     return events;
   }
 
-  public void indexHashing(Event event) {
+  void indexHashing(Event event) {
     String eventKey = getEventKey(event);
     String eventJson = gson.toJson(event);
     jedis.set(eventKey, eventJson);
@@ -60,7 +60,7 @@ public class EventDAO {
         });
   }
 
-  public Set<Event> searchHashed(Iterable<Facet> facets) {
+  Set<Event> searchHashed(Iterable<Facet> facets) {
     String hashedFacetKey = getHashedFacetKey(facets);
     Set<String> eventKeys = jedis.smembers(hashedFacetKey);
     Set<Event> events = getEvents(eventKeys);

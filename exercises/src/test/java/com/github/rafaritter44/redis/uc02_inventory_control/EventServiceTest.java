@@ -10,17 +10,17 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class EventServiceTest extends RedisTest {
+class EventServiceTest extends RedisTest {
 
   private EventService eventService;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     eventService = new EventService(getJedis(), new Gson());
   }
 
   @Test
-  public void shouldTryToPurchase() {
+  void shouldTryToPurchase() {
     Iterable<Event> events = getEvents();
     events.forEach(eventService::set);
 

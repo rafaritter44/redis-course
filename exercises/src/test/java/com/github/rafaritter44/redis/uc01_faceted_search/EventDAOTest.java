@@ -8,17 +8,17 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class EventDAOTest extends RedisTest {
+class EventDAOTest extends RedisTest {
 
   private EventDAO eventDAO;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     eventDAO = new EventDAO(getJedis(), new Gson());
   }
 
   @Test
-  public void shouldDoFacetedSearch() {
+  void shouldDoFacetedSearch() {
     Iterable<Event> events = getEvents();
     events.forEach(eventDAO::index);
 
@@ -43,7 +43,7 @@ public class EventDAOTest extends RedisTest {
   }
 
   @Test
-  public void shouldDoHashedFacetedSearch() {
+  void shouldDoHashedFacetedSearch() {
     Iterable<Event> events = getEvents();
     events.forEach(eventDAO::indexHashing);
 

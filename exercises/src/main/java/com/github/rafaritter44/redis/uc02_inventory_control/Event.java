@@ -6,7 +6,7 @@ import lombok.Value;
 
 @Value
 @Builder
-class Event {
+public class Event {
   String sku;
   String name;
   boolean disabledAccess;

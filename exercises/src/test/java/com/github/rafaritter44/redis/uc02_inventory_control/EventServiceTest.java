@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.github.rafaritter44.redis.RedisTest;
-import com.google.gson.Gson;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +15,7 @@ class EventServiceTest extends RedisTest {
 
   @BeforeEach
   void setUp() {
-    eventService = new EventService(getJedis(), new Gson());
+    eventService = new EventService(getJedis());
   }
 
   @Test

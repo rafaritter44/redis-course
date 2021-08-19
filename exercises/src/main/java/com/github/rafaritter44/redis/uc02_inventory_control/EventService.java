@@ -1,17 +1,9 @@
 package com.github.rafaritter44.redis.uc02_inventory_control;
 
 import com.github.rafaritter44.redis.KeyNameHelper;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import com.github.rafaritter44.redis.MapHelper;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import redis.clients.jedis.Jedis;
@@ -20,23 +12,21 @@ import redis.clients.jedis.Transaction;
 class EventService {
 
   private final Jedis jedis;
-  private final Gson gson;
 
-  EventService(Jedis jedis, Gson gson) {
+  EventService(Jedis jedis) {
     this.jedis = jedis;
-    this.gson = gson;
   }
 
   void set(Event event) {
     String eventKey = getEventKey(event);
-    Map<String, String> eventHash = toMap(event);
+    Map<String, String> eventHash = MapHelper.toMap(event);
     jedis.hmset(eventKey, eventHash);
   }
 
   Event get(String eventSku) {
     String eventKey = getEventKey(eventSku);
     Map<String, String> eventHash = jedis.hgetAll(eventKey);
-    Event event = fromMap(eventHash, Event.class);
+    Event event = MapHelper.fromMap(eventHash, Event.class);
     return event;
   }
 
@@ -62,41 +52,10 @@ class EventService {
     Transaction transaction = jedis.multi();
     transaction.hincrBy(eventKey, "available", -quantity);
     String purchaseKey = getPurchaseKey(purchase);
-    Map<String, String> purchaseHash = toMap(purchase);
+    Map<String, String> purchaseHash = MapHelper.toMap(purchase);
     transaction.hmset(purchaseKey, purchaseHash);
     transaction.exec();
     return true;
-  }
-
-  private Map<String, String> toMap(Object object) {
-    Map<String, String> map = new HashMap<>();
-    BeanInfo beanInfo;
-    try {
-      beanInfo = Introspector.getBeanInfo(object.getClass());
-    } catch (IntrospectionException e) {
-      throw new RuntimeException(e);
-    }
-    for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
-      String propertyName = propertyDescriptor.getName();
-      if ("class".equals(propertyName)) {
-        continue;
-      }
-      Method readMethod = propertyDescriptor.getReadMethod();
-      String propertyValue;
-      try {
-        propertyValue = readMethod.invoke(object).toString();
-      } catch (IllegalAccessException | InvocationTargetException e) {
-        throw new RuntimeException(e);
-      }
-      map.put(propertyName, propertyValue);
-    }
-    return map;
-  }
-
-  private <T> T fromMap(Map<String, String> map, Class<T> type) {
-    JsonElement json = gson.toJsonTree(map);
-    T object = gson.fromJson(json, type);
-    return object;
   }
 
   private String getEventKey(Event event) {
